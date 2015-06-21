@@ -199,17 +199,18 @@ autoload -Uz vcs_info
 
 VCS_WORKDIR_DIRTY=false
 VCS_CHANGESET_PREFIX=''
-if [[ "$POWERLEVEL9K_SHOW_CHANGESET" == true ]]; then
-  # Default: Just display the first 12 characters of our changeset-ID.
-  local VCS_CHANGESET_HASH_LENGTH=12
-  if [[ -n "$POWERLEVEL9K_CHANGESET_HASH_LENGTH" ]]; then
-    VCS_CHANGESET_HASH_LENGTH="$POWERLEVEL9K_CHANGESET_HASH_LENGTH"
-  fi
 
-  VCS_CHANGESET_PREFIX="%F{$VCS_FOREGROUND_COLOR_DARK}$VCS_COMMIT_ICON%0.$VCS_CHANGESET_HASH_LENGTH""i%f"
-fi
+#if [[ "$POWERLEVEL9K_SHOW_CHANGESET" == true ]]; then
+#  # Default: Just display the first 12 characters of our changeset-ID.
+#  local VCS_CHANGESET_HASH_LENGTH=12
+#  if [[ -n "$POWERLEVEL9K_CHANGESET_HASH_LENGTH" ]]; then
+#    VCS_CHANGESET_HASH_LENGTH="$POWERLEVEL9K_CHANGESET_HASH_LENGTH"
+#  fi
+#
+#  VCS_CHANGESET_PREFIX="%F{$VCS_FOREGROUND_COLOR_DARK}$VCS_COMMIT_ICON%0.$VCS_CHANGESET_HASH_LENGTH""i%f"
+#fi
 
-zstyle ':vcs_info:*' enable git hg
+zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' check-for-changes true
 
 VCS_DEFAULT_FORMAT="$VCS_CHANGESET_PREFIX%F{$VCS_FOREGROUND_COLOR}%b%c%u%m%f"
@@ -221,7 +222,7 @@ zstyle ':vcs_info:*' actionformats " %b %F{red}| %a%f"
 zstyle ':vcs_info:*' stagedstr " %F{$VCS_FOREGROUND_COLOR}$VCS_STAGED_ICON%f"
 zstyle ':vcs_info:*' unstagedstr " %F{$VCS_FOREGROUND_COLOR}$VCS_UNSTAGED_ICON%f"
 
-zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-stash git-remotebranch git-tagname
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked 
 
 # For Hg, only show the branch name
 zstyle ':vcs_info:hg*:*' branchformat "$VCS_BRANCH_ICON%b"
@@ -230,13 +231,13 @@ zstyle ':vcs_info:hg*:*' get-revision true
 zstyle ':vcs_info:hg*:*' get-bookmarks true
 zstyle ':vcs_info:hg*+gen-hg-bookmark-string:*' hooks hg-bookmarks
 
-if [[ "$POWERLEVEL9K_SHOW_CHANGESET" == true ]]; then
-  zstyle ':vcs_info:*' get-revision true
-else
+#if [[ "$POWERLEVEL9K_SHOW_CHANGESET" == true ]]; then
+#  zstyle ':vcs_info:*' get-revision true
+#else
   # A little performance-boost for large repositories (especially Hg). If we
   # don't show the changeset, we can switch to simple mode.
   zstyle ':vcs_info:*' use-simple true
-fi
+#fi
 
 ################################################################
 # Prompt Segment Constructors
@@ -433,7 +434,7 @@ prompt_context() {
 
 # Dir: current working directory
 prompt_dir() {
-  $1_prompt_segment "$0" "blue" "$DEFAULT_COLOR" '%~'
+  $1_prompt_segment "$0" "white" "$DEFAULT_COLOR" '%~'
 }
 
 # Command number (in local history)
@@ -595,9 +596,9 @@ powerlevel9k_init() {
 
   add-zsh-hook precmd prompt_powerlevel9k_precmd
 
-  if [[ "$POWERLEVEL9K_PROMPT_ON_NEWLINE" == true ]]; then
-    PROMPT="╭─%{%f%b%k%}"'$(build_left_prompt)'" 
-╰─ "
+#  if [[ "$POWERLEVEL9K_PROMPT_ON_NEWLINE" == true ]]; then
+    PROMPT="%{%f%b%k%}"'$(build_left_prompt)'" 
+» "
     # The right prompt should be on the same line as the first line of the left
     # prompt.  To do so, there is just a quite ugly workaround: Before zsh draws
     # the RPROMPT, we advise it, to go one line up. At the end of RPROMPT, we
@@ -605,11 +606,11 @@ powerlevel9k_init() {
     # http://superuser.com/questions/357107/zsh-right-justify-in-ps1
     RPROMPT_PREFIX='%{'$'\e[1A''%}' # one line up
     RPROMPT_SUFFIX='%{'$'\e[1B''%}' # one line down
-  else
-    PROMPT="%{%f%b%k%}"'$(build_left_prompt)'
-    RPROMPT_PREFIX=''
-    RPROMPT_SUFFIX=''
-  fi
+#  else
+#    PROMPT="%{%f%b%k%}"'$(build_left_prompt)'
+#    RPROMPT_PREFIX=''
+#    RPROMPT_SUFFIX=''
+#  fi
   RPROMPT=$RPROMPT_PREFIX"%{%f%b%k%}"'$(build_right_prompt)'"%{$reset_color%}"$RPROMPT_SUFFIX
 
 }
